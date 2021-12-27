@@ -16,6 +16,9 @@ namespace PlatformService.Data
 		}
 		public void CreatePlatform(Platform platform)
 		{
+			if (platform==null) {
+				throw new ArgumentNullException("platform cant be null");
+			}
 			_dbContext.Platforms.Add(platform);
 		}
 
@@ -26,7 +29,7 @@ namespace PlatformService.Data
 
 		public Platform GetPlatformById(int id)
 		{
-			throw new NotImplementedException();
+			return _dbContext.Platforms.FirstOrDefault(p => p.Id == id);
 		}
 
 		public bool SaveChanges()
