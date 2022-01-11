@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PlatformController.SyncDataService.Http;
 using PlatformService.Data;
 using PlatformService.Dto;
 using PlatformService.Models;
+using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace PlatformService.Controllers
 {
@@ -14,11 +17,13 @@ namespace PlatformService.Controllers
 	{
 		private readonly IPlatformRepo platformRepo;
 		private readonly IMapper mapper;
+		private readonly ICommandDataClient commandClient;
 
-		public PlatformController(IPlatformRepo platformRepo, IMapper mapper)
+		public PlatformController(IPlatformRepo platformRepo, IMapper mapper, ICommandDataClient commandClient)
 		{
 			this.platformRepo = platformRepo;
 			this.mapper = mapper;
+			this.commandClient = commandClient;
 		}
 
 		[HttpGet("")]
@@ -38,7 +43,7 @@ namespace PlatformService.Controllers
 		}
 
 		[HttpPost]
-		public ActionResult Create(PlatformCreateDto create)
+		public async Task<ActionResult> Create(PlatformCreateDto create)
 		{
 			if (!ModelState.IsValid) {
 				return BadRequest(ModelState);
@@ -49,6 +54,16 @@ namespace PlatformService.Controllers
 			var saved=platformRepo.SaveChanges();
 			if (saved) {
 				var platformForSend = mapper.Map<PlatformReadDto>(platform);
+
+				try
+				{
+					await commandClient.SendPlatformToCommand(platformForSend);
+				}
+				catch (Exception e)
+				{
+					Console.WriteLine(e.Message);
+				}
+
 				return CreatedAtRoute(nameof(Details),new {Id= platformForSend.Id }, platformForSend);
 			}
 			return BadRequest(create);

@@ -12,7 +12,7 @@ namespace PlatformService.Data
 	{
 		public AppDbContext(DbContextOptions<AppDbContext> opt):base(opt)
 		{
-				
+		
 		}
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)

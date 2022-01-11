@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using PlatformController.SyncDataService.Http;
 using PlatformService.Data;
 using System;
 using System.Collections.Generic;
@@ -32,6 +33,7 @@ namespace PlatformService
 
 			services.AddControllers();
 			services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+			services.AddHttpClient<ICommandDataClient, CommandDataClient>();
 			services.AddSwaggerGen(c =>
 			{
 				c.SwaggerDoc("v1", new OpenApiInfo { Title = "PlatformService", Version = "v1" });
@@ -58,6 +60,21 @@ namespace PlatformService
 			{
 				endpoints.MapControllers();
 			});
+
+			UpdateDatabase(app);
+		}
+
+		private static void UpdateDatabase(IApplicationBuilder app)
+		{
+			using (var serviceScope = app.ApplicationServices
+				.GetRequiredService<IServiceScopeFactory>()
+				.CreateScope())
+			{
+				using (var context = serviceScope.ServiceProvider.GetService<AppDbContext>())
+				{
+					context.Database.Migrate();
+				}
+			}
 		}
 	}
 }

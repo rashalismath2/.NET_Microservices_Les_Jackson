@@ -62,3 +62,4 @@ E:\projects\Microservice\PlatformService\PlatformService\obj\Debug\net5.0\Platfo
 E:\projects\Microservice\PlatformService\PlatformService\obj\Debug\net5.0\PlatformService.genruntimeconfig.cache
 E:\projects\Microservice\PlatformService\PlatformService\bin\Debug\net5.0\AutoMapper.dll
 E:\projects\Microservice\PlatformService\PlatformService\bin\Debug\net5.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
+E:\projects\Microservice\PlatformService\PlatformService\bin\Debug\net5.0\appsettings.Production.json
